@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>booking appointment app</title>
+
+</head>
+<body>
+
+    <div id = "input-ele">
+        <label >name:</label>
+        <input type="text" id = "name-inp" required>
+        <label >email: </label>
+        <input type="email"  id="email-inp" required>
+        <label >Phone Number: </label>
+        <input type="tel"  id="num-inp" required>
+        <button onclick="addAppointment()">Add appointment</button>
+    </div>
+    <div id="mainArea">
+
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script>
+        async function addAppointment(){
+            const name = document.getElementById('name-inp').value;
+            const email = document.getElementById('email-inp').value;
+            const phoneNumber = document.getElementById('num-inp').value;
+
+            const details = {
+                name,
+                email,
+                phoneNumber
+            }
+            try{
+                const res = await axios.post("http://localhost:3000/api/appointments",details);
+                const data = res.data;
+                showOnScreen(data);
+            }catch(err){
+                console.log(err);
+            }
+            document.getElementById('name-inp').value = '';
+            document.getElementById('email-inp').value= '';
+            document.getElementById('num-inp').value= '';
+
+        }
+
+        async function showOnScreen(obj){
+            const main = document.getElementById('mainArea');
+            const parent = document.createElement('div');
+            const child1 = document.createElement('span');
+            const child2 = document.createElement('span');
+            const child3 = document.createElement('span');
+            const child4 = document.createElement('button');
+            const child5 = document.createElement('button');
+
+            child1.innerHTML = `Name: ${obj.name} `;
+            child2.innerHTML = `Email: ${obj.email} `;
+            child3.innerHTML = `Phone No: ${obj.phoneNumber} `;
+            child4.innerHTML = 'delete ';
+            child5.innerHTML = 'edit';
+
+            child4.addEventListener('click',async()=>{
+                try{
+                    const id = obj.id;
+                    await axios.delete(`http://localhost:3000/api/appointments/${id}`);
+                    console.log('deleted');
+                    parent.remove();
+
+                }catch(err){
+                    console.log(err);
+                }
+            })
+            child5.addEventListener('click',async()=>{
+                try{
+                    const id = obj.id;
+                    await axios.delete(`http://localhost:3000/api/appointments/${id}`);
+                    console.log('deleted');
+
+
+                    document.getElementById('name-inp').value = obj.name;
+                    document.getElementById('email-inp').value = obj.email;
+                    document.getElementById('num-inp').value = obj.phoneNumber;
+
+                    parent.remove();
+                    
+
+                }catch(err){
+                    console.log(err);
+                }
+            })
+
+            parent.appendChild(child1);
+            parent.appendChild(child2);
+            parent.appendChild(child3);
+            parent.appendChild(child4);
+            parent.appendChild(child5);
+
+            main.appendChild(parent);
+        }
+
+        window.addEventListener("DOMContentLoaded",async ()=>{
+            try{
+                const res = await axios.get("http://localhost:3000/api/appointments");
+                const allAppointments = res.data.allAppointments;
+                for(let i = 0; i < allAppointments.length; i++){
+                    showOnScreen(allAppointments[i]);
+                }
+            }catch(err){
+                console.log(err);
+            }
+        });
+    </script>
+</body>
+</html>
