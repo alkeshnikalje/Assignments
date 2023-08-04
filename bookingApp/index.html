@@ -1,29 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>booking appointment app</title>
+    <title>Booking Appointment App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
 
+        #heading {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #input-ele {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 0 auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #mainArea {
+            margin: 20px auto;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #mainArea > div {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #mainArea > div > span {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        #mainArea > div > button {
+            background-color: #dc3545;
+            margin-left: 5px;
+        }
+
+        #mainArea > div > button:hover {
+            background-color: #c82333;
+        }
+    </style>
 </head>
-<body>
 
-    <div id = "input-ele">
-        <label >name:</label>
-        <input type="text" id = "name-inp" required>
-        <label >email: </label>
-        <input type="email"  id="email-inp" required>
-        <label >Phone Number: </label>
-        <input type="tel"  id="num-inp" required>
+<body>
+    <div id="heading">
+        <h3>Book Appointments</h3>
+    </div>
+    <div id="input-ele">
+        <label for="name">Name:</label>
+        <input type="text" id="name-inp" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email-inp" required>
+        <label for="num">Phone Number:</label>
+        <input type="tel" id="num-inp" required>
         <button onclick="addAppointment()">Add appointment</button>
     </div>
     <div id="mainArea">
 
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
     <script>
-        async function addAppointment(){
+        async function addAppointment() {
             const name = document.getElementById('name-inp').value;
             const email = document.getElementById('email-inp').value;
             const phoneNumber = document.getElementById('num-inp').value;
@@ -33,22 +123,32 @@
                 email,
                 phoneNumber
             }
-            try{
-                const res = await axios.post("http://localhost:3000/api/appointments",details);
+            try {
+                const res = await axios.post("http://localhost:3000/api/appointments", details);
                 const data = res.data;
                 showOnScreen(data);
-            }catch(err){
+            } catch (err) {
                 console.log(err);
             }
             document.getElementById('name-inp').value = '';
-            document.getElementById('email-inp').value= '';
-            document.getElementById('num-inp').value= '';
-
+            document.getElementById('email-inp').value = '';
+            document.getElementById('num-inp').value = '';
         }
 
-        async function showOnScreen(obj){
+        async function showOnScreen(obj) {
             const main = document.getElementById('mainArea');
+
+            // Create a unique identifier for each appointment div using the appointment ID
+            const parentId = `appointment-${obj.id}`;
+
+            // Check if an appointment div with the same ID already exists
+            if (document.getElementById(parentId)) {
+                return; // If it exists, do not create a duplicate
+            }
+
             const parent = document.createElement('div');
+            parent.setAttribute('id', parentId); // Set the unique identifier for the div
+
             const child1 = document.createElement('span');
             const child2 = document.createElement('span');
             const child3 = document.createElement('span');
@@ -61,35 +161,33 @@
             child4.innerHTML = 'delete ';
             child5.innerHTML = 'edit';
 
-            child4.addEventListener('click',async()=>{
-                try{
+            child4.addEventListener('click', async () => {
+                try {
                     const id = obj.id;
                     await axios.delete(`http://localhost:3000/api/appointments/${id}`);
                     console.log('deleted');
                     parent.remove();
 
-                }catch(err){
+                } catch (err) {
                     console.log(err);
                 }
-            })
-            child5.addEventListener('click',async()=>{
-                try{
+            });
+
+            child5.addEventListener('click', async () => {
+                try {
                     const id = obj.id;
                     await axios.delete(`http://localhost:3000/api/appointments/${id}`);
                     console.log('deleted');
-
 
                     document.getElementById('name-inp').value = obj.name;
                     document.getElementById('email-inp').value = obj.email;
                     document.getElementById('num-inp').value = obj.phoneNumber;
 
                     parent.remove();
-                    
-
-                }catch(err){
+                } catch (err) {
                     console.log(err);
                 }
-            })
+            });
 
             parent.appendChild(child1);
             parent.appendChild(child2);
@@ -100,17 +198,18 @@
             main.appendChild(parent);
         }
 
-        window.addEventListener("DOMContentLoaded",async ()=>{
-            try{
+        window.addEventListener("DOMContentLoaded", async () => {
+            try {
                 const res = await axios.get("http://localhost:3000/api/appointments");
                 const allAppointments = res.data.allAppointments;
-                for(let i = 0; i < allAppointments.length; i++){
+                for (let i = 0; i < allAppointments.length; i++) {
                     showOnScreen(allAppointments[i]);
                 }
-            }catch(err){
+            } catch (err) {
                 console.log(err);
             }
         });
     </script>
 </body>
+
 </html>
