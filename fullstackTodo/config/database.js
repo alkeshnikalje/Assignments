@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize("todo",process.env.USER,process.env.PASSWORD,{
-    host : process.env.HOST,
+const sequelize = new Sequelize("todo","alkesh","alkesh",{
+    host : "192.168.1.36",
     dialect: 'mysql'
 });
 
-module.exports = sequelize;
+
 
 module.exports = sequelize;

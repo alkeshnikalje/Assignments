@@ -13,7 +13,7 @@ const Todo = sequelize.define("todolist",{
         allowNull : false
     },
     description : {
-        type : Sequelize.INTEGER,
+        type : Sequelize.STRING,
         allowNull : false
     }
 })
