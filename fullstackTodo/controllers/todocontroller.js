@@ -54,3 +54,23 @@ exports.deleteTodo = async (req,res)=>{
         res.status(500).json({msg: err.message});
     }
 }
+
+exports.updateTodo = async (req,res)=>{
+    try{
+        const id = req.params.todoId;
+
+        const TodoToBeUpdated = await Todo.findByPk(id);
+        if(!TodoToBeUpdated){
+            return res.status(404).json({msg: "todo not found"});
+        }
+        TodoToBeUpdated.title = req.body.title;
+        TodoToBeUpdated.description = req.body.description;
+
+        await TodoToBeUpdated.save();
+        return res.json(TodoToBeUpdated);
+        
+    }
+    catch(err){
+        res.status(500).json({msg: err.message});
+    }
+}
