@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo-app</title>
+</head>
+<body>
+    <h2>Add your todos</h2>
+    <br>
+    <label >title:</label>
+    <input type="text"  id="title-inp">
+    <label >description:</label>
+    <input type="text"  id="desc-inp">
+    <button onclick="addTodo()">Add todo</button>
+    <br>
+    <div id="remaining-todos">
+        <h4>todos-</h4>
+    </div>
+    <div id="done-todos">
+        <h4>completed todos-</h4>
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script>
+        async function addTodo(){
+            const title = document.getElementById('titile-inp');
+            const description = document.getElementById('desc-inp');
+
+            data = {
+                title : title.value,
+                description : description.value
+            }
+            const res = await axios.post("http://localhost:3000/api/todos",data);
+            const responseData = res.data;
+            showOnScreen(responseData);
+
+            title.value = '';
+            description.value = '';
+        }
+
+        function showOnScreen(obj){
+            const main1 = document.getElementById('remaining-todos');
+            const main2 = document.getElementById('done-todos');
+
+            const parent = document.createElement('div');
+            const child1 = document.createElement('span');
+            const child2 = document.createElement('span');
+            const child3 = document.createElement('button');
+            const child4 = document.createElement('button');
+            child1.innerHTML = `${obj.title}- `
+            child2.innerHTML = `${obj.description} `
+            child3.innerHTML = 'Done';
+            child4.innerHTML = 'Delete';
+
+            parent.appendChild(child1);
+            parent.appendChild(child2);
+            parent.appendChild(child3);
+            parent.appendChild(child4);
+            main1.appendChild(parent);
+        }
+    </script>
+</body>
+</html>
