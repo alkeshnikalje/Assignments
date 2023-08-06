@@ -27,19 +27,24 @@
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
     <script>
         async function addTodo(){
-            const title = document.getElementById('titile-inp');
-            const description = document.getElementById('desc-inp');
+            const title = document.getElementById('title-inp').value;
+            const description = document.getElementById('desc-inp').value;
 
             data = {
-                title : title.value,
-                description : description.value
+                title,
+                description 
             }
+            try{
             const res = await axios.post("http://localhost:3000/api/todos",data);
             const responseData = res.data;
             showOnScreen(responseData);
+            }
+            catch(err){
+                console.log(err);
+            }
+            document.getElementById('title-inp').value = '';
+            document.getElementById('desc-inp').value = '';
 
-            title.value = '';
-            description.value = '';
         }
 
         function showOnScreen(obj){
