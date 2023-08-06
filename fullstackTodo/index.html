@@ -49,7 +49,6 @@
 
         function showOnScreen(obj){
             const main1 = document.getElementById('remaining-todos');
-            const main2 = document.getElementById('done-todos');
 
             const parent = document.createElement('div');
             const child1 = document.createElement('span');
@@ -60,13 +59,46 @@
             child2.innerHTML = `${obj.description} `
             child3.innerHTML = 'Done';
             child4.innerHTML = 'Delete';
+            child4.addEventListener("click",async()=>{
+                try{
+                        await axios.delete(`http://localhost:3000/api/todos/${obj.id}`);
+                        console.log("delete");
+                    }
+                    catch(err){
+                        console.log(err);
+                    }
+                    parent.remove();
+            })
+            child3.addEventListener('click',()=>{
+                const main2 = document.getElementById('done-todos');
+                const parent2 = document.createElement("div");
+                const removeTodo = document.createElement("button");
+                removeTodo.innerHTML = "remove";
+                parent2.appendChild(child1);
+                parent2.appendChild(child2);
+                parent2.appendChild(removeTodo);
+                main2.appendChild(parent2);
+                parent.remove();
 
+                removeTodo.addEventListener("click",async()=>{
+                    try{
+                        await axios.delete(`http://localhost:3000/api/todos/${obj.id}`);
+                        console.log("delete");
+                    }
+                    catch(err){
+                        console.log(err);
+                    }
+                    parent2.remove();
+                });
+            });
             parent.appendChild(child1);
             parent.appendChild(child2);
             parent.appendChild(child3);
             parent.appendChild(child4);
             main1.appendChild(parent);
         }
+
+        
     </script>
 </body>
 </html>
