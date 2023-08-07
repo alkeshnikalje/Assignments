@@ -65,6 +65,7 @@ exports.updateTodo = async (req,res)=>{
         }
         TodoToBeUpdated.title = req.body.title;
         TodoToBeUpdated.description = req.body.description;
+        TodoToBeUpdated.isDone = req.body.isDone;
 
         await TodoToBeUpdated.save();
         return res.json(TodoToBeUpdated);

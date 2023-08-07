@@ -32,7 +32,7 @@
 
             data = {
                 title,
-                description 
+                description
             }
             try{
             const res = await axios.post("http://localhost:3000/api/todos",data);
@@ -48,55 +48,101 @@
         }
 
         function showOnScreen(obj){
-            const main1 = document.getElementById('remaining-todos');
-
-            const parent = document.createElement('div');
-            const child1 = document.createElement('span');
-            const child2 = document.createElement('span');
-            const child3 = document.createElement('button');
-            const child4 = document.createElement('button');
-            child1.innerHTML = `${obj.title}- `
-            child2.innerHTML = `${obj.description} `
-            child3.innerHTML = 'Done';
-            child4.innerHTML = 'Delete';
-            child4.addEventListener("click",async()=>{
-                try{
-                        await axios.delete(`http://localhost:3000/api/todos/${obj.id}`);
-                        console.log("delete");
+            const toBeDoneTodos = document.getElementById('remaining-todos');
+            const completedTodos = document.getElementById('done-todos');
+            if(obj.isDone === false){
+                const parent = document.createElement('div');
+                const child1 = document.createElement('span');
+                const child2 = document.createElement('span');
+                const child3 = document.createElement('button');
+                const child4 = document.createElement('button');
+                child1.innerHTML = `${obj.title}- `;
+                child2.innerHTML = `${obj.description} `;
+                child3.innerHTML = 'Done';
+                child4.innerHTML = 'Delete';
+                
+                child3.addEventListener("click",async ()=>{
+                    try{
+                        obj.isDone = true
+                        
+                        const res = await axios.put(`http://localhost:3000/api/todos/${obj.id}`,{
+                            title : obj.title,
+                            description : obj.description,
+                            isDone : obj.isDone
+                        })
+                        const updatedTodo = res.data;
+                        console.log(updatedTodo);
+                        parent.remove();
+                        showOnScreen(updatedTodo);
                     }
                     catch(err){
                         console.log(err);
                     }
-                    parent.remove();
-            })
-            child3.addEventListener('click',()=>{
-                const main2 = document.getElementById('done-todos');
-                const parent2 = document.createElement("div");
-                const removeTodo = document.createElement("button");
-                removeTodo.innerHTML = "remove";
-                parent2.appendChild(child1);
-                parent2.appendChild(child2);
-                parent2.appendChild(removeTodo);
-                main2.appendChild(parent2);
-                parent.remove();
+                })
 
-                removeTodo.addEventListener("click",async()=>{
+                child4.addEventListener("click",async()=>{
                     try{
                         await axios.delete(`http://localhost:3000/api/todos/${obj.id}`);
-                        console.log("delete");
+                        parent.remove();
+                        console.log('deleted');
                     }
                     catch(err){
                         console.log(err);
                     }
-                    parent2.remove();
-                });
-            });
-            parent.appendChild(child1);
-            parent.appendChild(child2);
-            parent.appendChild(child3);
-            parent.appendChild(child4);
-            main1.appendChild(parent);
+                })
+
+
+
+                parent.appendChild(child1);
+                parent.appendChild(child2);
+                parent.appendChild(child3);
+                parent.appendChild(child4);
+
+                toBeDoneTodos.appendChild(parent);
+            }else{
+                const parent = document.createElement('div');
+                const child1 = document.createElement('span');
+                const child2 = document.createElement('span');
+                const child3 = document.createElement('button');
+                child1.innerHTML = `${obj.title}- `;
+                child2.innerHTML = `${obj.description} `;
+                child3.innerHTML = 'deleteTodo';
+                
+                child3.addEventListener("click",async()=>{
+                    try{
+                        await axios.delete(`http://localhost:3000/api/todos/${obj.id}`);
+                        console.log('deleted');
+                        parent.remove();
+                    }
+                    catch(err){
+                        console.log(err);
+                    }
+
+                    
+                })
+
+                parent.appendChild(child1);
+                parent.appendChild(child2);
+                parent.appendChild(child3);
+
+
+                completedTodos.appendChild(parent);
+            }
         }
+
+        window.addEventListener("DOMContentLoaded",async ()=>{
+            try{
+                const res =await axios.get("http://localhost:3000/api/todos");
+                const todos = res.data;
+                console.log(todos);
+                for(let i=0; i <todos.length; i++){
+                    showOnScreen(todos[i]);
+                }
+            }
+            catch(err){
+                console.log(err);
+            }
+        })
 
         
     </script>

@@ -15,6 +15,10 @@ const Todo = sequelize.define("todolist",{
     description : {
         type : Sequelize.STRING,
         allowNull : false
+    },
+    isDone : {
+        type : Sequelize.BOOLEAN,
+        defaultValue: false
     }
 })
 
