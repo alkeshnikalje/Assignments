@@ -10,7 +10,7 @@ function Accordian({
   handleClick,
 }) {
   return (
-    <div className="item">
+    <div className={`item ${isOpened ? "selected" : ""}`}>
       <p className={isOpened ? "openNumber" : "closeNumber"}>{number}</p>
       <p className={isOpened ? "openQue" : "closeQue"}>{question}</p>
       <img
